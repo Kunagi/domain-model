@@ -1,0 +1,3 @@
+{:watch-dirs ["src" "../facts-db/src"]
+ :open-file-command "emacsclient"
+ :launch-js ["google-chrome" :open-url]}
