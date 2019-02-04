@@ -18,21 +18,21 @@
   [model facts]
   (-> facts
       module/conform
-      (->> (db/update-entity model))))
+      (->> (db/++ model))))
 
 
 (defn def-entity
   [model facts]
   (-> facts
       entity/conform
-      (->> (db/update-entity model))))
+      (->> (db/++ model))))
 
 
 (defn def-event
   [model facts]
   (-> facts
       event/conform
-      (->> (db/update-entity model))))
+      (->> (db/++ model))))
 
 
 (def-bindscript ::example

@@ -11,4 +11,4 @@
 
 (defn update-model
   [model]
-  (swap! !db db/update-entity model))
+  (swap! !db db/++ model))
