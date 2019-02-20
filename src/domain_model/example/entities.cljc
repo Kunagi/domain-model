@@ -3,5 +3,3 @@
    [domain-model.api :as dm]))
 
 
-(dm/def-module ::example
-  :doc "Example")
