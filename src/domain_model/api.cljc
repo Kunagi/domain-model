@@ -4,6 +4,22 @@
    [facts-db.api :as db]))
 
 
+;;; meta api
+
+(defmulti apply-event (fn [model event args] event))
+
+(defn apply-events
+  [model events]
+  (reduce
+   (fn [model [event-name args]]
+     (apply-event model event-name args))
+   model
+   events))
+
+
+;;; domain model api implementation
+
+
 (defn new-model
   []
   (-> (db/new-db)
@@ -12,15 +28,15 @@
                :modules #{}}])))
 
 
-(defn on-module-created
-  [model id]
+(defmethod apply-event :domain-model/module-created
+  [model event {:keys [id]}]
   (-> model
       (db/++ :model :modules {:db/id id
                               :entities #{}})))
 
 
-(defn on-entity-created
-  [model module-id container-id id]
+(defmethod apply-event :domain-model/entity-created
+  [model event {:keys [module-id container-id id]}]
   (-> model
       (db/++ [[module-id :entities]
               [container-id :components]]
@@ -31,12 +47,22 @@
               :facts #{}})))
 
 
+
+
+
+
 (def-bindscript ::full-stack
   model (new-model)
-  model (on-module-created model :kunagi)
+  model (apply-events model [[:domain-model/module-created {:id :kunagi}]])
 
-  model (on-entity-created model :kunagi nil :kunagi/pbl)
-  model (on-entity-created model :kunagi :kunagi/pbl :kunagi/pbl-item)
+  model (apply-events model [[:domain-model/entity-created
+                              {:module-id :kunagi
+                               :container-id nil
+                               :id :kunagi/pbl}]
+                             [:domain-model/entity-created
+                              {:module-id :kunagi
+                               :container-id :kunagi/pbl
+                               :id :kunagi/pbl-item}]])
 
   tree  (db/tree model
                  :model
