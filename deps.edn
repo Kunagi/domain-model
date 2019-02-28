@@ -6,6 +6,7 @@
                  :extra-paths ["target"
                                "../bindscript/src"
                                "../browser-headsup/src"
+                               "../conform/src"
                                "../facts-db/src"],
                  :main-opts ["--main" "figwheel.main" "--build" "dev"]}},
  :deps {kunagi/facts-db {:local/root "../facts-db"},
