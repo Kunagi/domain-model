@@ -22,30 +22,30 @@
 
 (def-event ::module-created
   (fn [model {:keys [id]}]
-    (-> model
-        (db/++ :model :modules {:db/id id
-                                :entities #{}}))))
+    {:db/id id
+     :entities #{}
+     :db/add-ref-n [:model :modules]}))
 
 
 (def-event ::entity-created
   (fn [model {:keys [id module-id container-id ident]}]
     (let [ident (or ident :some/entity)]
-      (-> model
-          (db/++ [[module-id :entities]
-                  [container-id :components]]
-                 {:db/id id
-                  :module module-id
-                  :container container-id
-                  :ident ident
-                  :components #{}
-                  :facts #{}})))))
+      [{:db/id id
+        :module module-id
+        :container container-id
+        :ident ident
+        :components #{}
+        :facts #{}}
+       {:db/id module-id
+        [:db/add-1 :entities] id}
+       {:db/id container-id
+        [:db/add-1 :components] id}])))
 
 
 (def-event ::element-fact-updated
   (fn [model {:keys [element-id fact value]}]
-    (-> model
-        (db/++ {:db/id element-id
-                fact value}))))
+    {:db/id element-id
+     fact value}))
 
 
 (def-query ::modules-ids
