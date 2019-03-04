@@ -5,7 +5,7 @@
    [facts-db.ddapi :as ddapi :refer [def-event def-query def-api events> <query new-db]]))
 
 
-(def-api :domain-model
+(def-api ::domain-model
   :autocreate-singleton-db? true
   :db-constructor
   (fn [db args]
@@ -13,17 +13,21 @@
            [{:db/id :model/config
              :constructor-args args}
             {:db/id :model
-             :modules #{}}])))
+             :modules #{:kunagi}}
+            ;; TODO remove :kunagi
+            {:db/id :kunagi
+             :ident :kunagi
+             :entities #{}}])))
 
 
-(def-event :domain-model/module-created
+(def-event ::module-created
   (fn [model {:keys [id]}]
     (-> model
         (db/++ :model :modules {:db/id id
                                 :entities #{}}))))
 
 
-(def-event :domain-model/entity-created
+(def-event ::entity-created
   (fn [model {:keys [id module-id container-id ident]}]
     (let [ident (or ident :some/entity)]
       (-> model
@@ -37,36 +41,36 @@
                   :facts #{}})))))
 
 
-(def-event :domain-model/element-fact-updated
-  (fn [model {:keys [entity-id fact value]}]
+(def-event ::element-fact-updated
+  (fn [model {:keys [element-id fact value]}]
     (-> model
-        (db/++ {:db/id entity-id
+        (db/++ {:db/id element-id
                 fact value}))))
 
 
-(def-query :domain-model/modules-ids
+(def-query ::modules-ids
   (fn [model {:keys []}]
     (get-in model [:model :modules])))
 
 
-(def-query :domain-model/model-details
+(def-query ::model-details
   (fn [db _]
     (db/tree db :model {:modules {:entities {}
                                   :types {}}})))
 
 
-(def-query :domain-model/module-details
+(def-query ::module-details
   (fn [model {:keys [id]}]
     (db/tree model id {:entities {}
                        :types {}})))
 
 
-(def-query :domain-model/entity
+(def-query ::entity
   (fn [model {:keys [id]}]
     (db/tree model id {})))
 
 
-(def-query :domain-model/entities
+(def-query ::entities
   (fn [model {:keys [ids]}]
     (db/trees model ids {})))
 
