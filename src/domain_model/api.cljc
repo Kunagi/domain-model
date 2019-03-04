@@ -9,15 +9,14 @@
   :autocreate-singleton-db? true
   :db-constructor
   (fn [db args]
-    (db/++ db
-           [{:db/id :model/config
-             :constructor-args args}
-            {:db/id :model
-             :modules #{:kunagi}}
-            ;; TODO remove :kunagi
-            {:db/id :kunagi
-             :ident :kunagi
-             :entities #{}}])))
+    [{:db/id :model/config
+      :constructor-args args}
+     {:db/id :model
+      :modules #{:kunagi}}
+     ;; TODO remove :kunagi
+     {:db/id :kunagi
+      :ident :kunagi
+      :entities #{}}]))
 
 
 (def-event ::module-created
