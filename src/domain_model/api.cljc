@@ -5,10 +5,14 @@
    [facts-db.ddapi :as ddapi :refer [def-event def-query def-api events> <query new-db]]))
 
 
+
+
+
+
 (def-api ::domain-model
   :autocreate-singleton-db? true
   :db-constructor
-  (fn [db args]
+  (fn [args]
     [{:db/id :model/config
       :constructor-args args}
      {:db/id :model
